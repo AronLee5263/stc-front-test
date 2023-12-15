@@ -1,0 +1,1 @@
+# stc-front-test
