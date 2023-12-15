@@ -1,11 +1,28 @@
+import Papa from "papaparse";
+
 export default function Main() {
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files && files.length > 0) {
-      console.log(files[0]);
-    } else {
-      console.error("선택된 파일 없음.");
+    if (!files || files.length === 0) {
+      console.error("파일이 선택되지 않았습니다.");
+      return; // 파일이 선택되지 않았을 경우 리턴
     }
+
+    Papa.parse(files[0], {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        console.log(results.data);
+      },
+    });
+
+    // console.log(files[0]);
+
+    // if (files && files.length > 0) {
+    //   console.log(files[0]);
+    // } else {
+    //   console.error("선택된 파일 없음.");
+    // }
   };
 
   return (
