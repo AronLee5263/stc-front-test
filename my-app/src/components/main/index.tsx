@@ -1,6 +1,13 @@
 import Papa from "papaparse";
+import { useState } from "react";
+
+type ParsedDataType = { [key: string]: string };
 
 export default function Main() {
+  const [parsedData, setParsedData] = useState<ParsedDataType[]>([]);
+  const [tableRows, setTableRows] = useState<string[]>([]);
+  const [values, setValues] = useState<string[][]>([]);
+
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) {
@@ -12,17 +19,27 @@ export default function Main() {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
-        console.log(results.data);
+        // console.log(results.data);
+        const rowsArray: string[][] = [];
+        const valuesArray: string[][] = [];
+
+        const data = results.data as ParsedDataType[];
+
+        data.forEach((d) => {
+          rowsArray.push(Object.keys(d));
+          valuesArray.push(Object.values(d));
+        });
+
+        // Parsed Data Response in array format
+        setParsedData(data); // 타입 오류 수정
+
+        // Filtered Column Names
+        setTableRows(rowsArray[0]);
+
+        // Filtered Values
+        setValues(valuesArray);
       },
     });
-
-    // console.log(files[0]);
-
-    // if (files && files.length > 0) {
-    //   console.log(files[0]);
-    // } else {
-    //   console.error("선택된 파일 없음.");
-    // }
   };
 
   return (
@@ -37,6 +54,30 @@ export default function Main() {
           onChange={changeHandler}
           style={{ display: "block", margin: "10px auto" }}
         />
+
+        <br />
+        <br />
+        {/* Table */}
+        <table>
+          <thead>
+            <tr>
+              {tableRows.map((rows, index) => {
+                return <th key={index}>{rows}</th>;
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {values.map((value, index) => {
+              return (
+                <tr key={index}>
+                  {value.map((val, i) => {
+                    return <td key={i}>{val}</td>;
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </>
   );
