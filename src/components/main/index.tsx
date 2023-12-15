@@ -30,8 +30,7 @@ export default function Main() {
           valuesArray.push(Object.values(d));
         });
 
-        // Parsed Data Response in array format
-        setParsedData(data); // 타입 오류 수정
+        setParsedData(data);
 
         // Filtered Column Names
         setTableRows(rowsArray[0]);
@@ -46,7 +45,6 @@ export default function Main() {
     <>
       <h2 style={{ display: "block", margin: "3rem " }}> csv 파일을 업로드 하세요</h2>
       <div>
-        {/* File Uploader */}
         <input
           type="file"
           name="file"
@@ -57,15 +55,16 @@ export default function Main() {
 
         <br />
         <br />
-        {/* Table */}
+
         <table>
           <thead>
             <tr>
               {tableRows.map((rows, index) => {
-                return <th key={index}>{rows}</th>;
+                return <th key={index}> {rows}</th>;
               })}
             </tr>
           </thead>
+
           <tbody>
             {values.map((value, index) => {
               return (
