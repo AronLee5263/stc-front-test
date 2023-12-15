@@ -5,8 +5,8 @@ type ParsedDataType = { [key: string]: string };
 
 export default function Main() {
   const [parsedData, setParsedData] = useState<ParsedDataType[]>([]);
-  const [tableRows, setTableRows] = useState<string[]>([]);
-  const [values, setValues] = useState<string[][]>([]);
+  const [tableHeaders, setTableHeaders] = useState<string[]>([]);
+  const [colums, setColums] = useState<string[][]>([]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -33,10 +33,10 @@ export default function Main() {
         setParsedData(data);
 
         // Filtered Column Names
-        setTableRows(rowsArray[0]);
+        setTableHeaders(rowsArray[0]);
 
         // Filtered Values
-        setValues(valuesArray);
+        setColums(valuesArray);
       },
     });
   };
@@ -59,14 +59,14 @@ export default function Main() {
         <table>
           <thead>
             <tr>
-              {tableRows.map((rows, index) => {
+              {tableHeaders.map((rows, index) => {
                 return <th key={index}> {rows}</th>;
               })}
             </tr>
           </thead>
 
           <tbody>
-            {values.map((value, index) => {
+            {colums.map((value, index) => {
               return (
                 <tr key={index}>
                   {value.map((val, i) => {
