@@ -1,121 +1,98 @@
-import Papa from "papaparse";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Header from "../header";
 
-type ParsedDataType = { [key: string]: string };
+type RowData = {
+  ip: string;
+  timestamp: string;
+  method: string;
+  path: string;
+  protocol: string;
+  status: string;
+};
 
 export default function Main() {
-  const [parsedData, setParsedData] = useState<ParsedDataType[]>([]);
-  const [pathData, setPathData] = useState<ParsedDataType[]>([]);
-
-  const [tableHeaders, setTableHeaders] = useState<string[]>([]);
-  // const [colums, setColums] = useState<string[][]>([]);
-  const classifiedData: string[] = [];
+  const [data, setData] = useState<RowData[]>([]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) {
       console.error("파일이 선택되지 않았습니다.");
-      return; // 파일이 선택되지 않았을 경우 리턴
+      return;
     }
 
-    Papa.parse(files[0], {
-      header: true,
-      skipEmptyLines: true,
-      complete: function (results) {
-        console.log(results);
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const text = (e.target?.result as string) || "";
+      const lines = text.split("\n");
+      const parsedData: RowData[] = lines.map((line) => {
+        // 공백을 기준으로 데이터 분할
+        const parts = line.split(" ");
+        if (parts.length < 6) {
+          // 데이터 형식이 맞지 않는 경우 빈 객체 반환
+          return { ip: "", timestamp: "", method: "", path: "", protocol: "", status: "" };
+        }
+        const ip = parts[0];
+        const timestamp = parts[1];
+        const method = parts[2];
+        const path = parts[3];
+        const protocol = parts[4];
+        const status = parts[5];
 
-        const data = results.data as ParsedDataType[];
-        // const valuesArray: string[][] = [];
-        const headers = Object.keys(data[0]);
+        return { ip, timestamp, method, path, protocol, status };
+      });
 
-        setTableHeaders(headers);
-
-        // data.forEach((d) => {
-        //   // rowsArray.push(Object.keys(d));
-        //   valuesArray.push(Object.values(d));
-        // });
-
-        // parsedData를 공백을 기준으로 값들을 나누어 수정
-        const modifiedData = data.map((item) => {
-          const newItem: ParsedDataType = {};
-          for (const key in item) {
-            if (item.hasOwnProperty(key)) {
-              const value = item[key];
-              newItem[key] = typeof value === "string" ? value.split(" ").slice(2, 4).join(" ") : value;
-            }
-          }
-          return newItem;
-        });
-
-        setParsedData(data);
-        setPathData(modifiedData);
-
-        // setTableHeaders(rowsArray[0]);
-        // setColums(valuesArray);
-      },
-    });
+      setData(parsedData.filter((row) => row.ip)); // 빈 객체는 필터링
+    };
+    reader.readAsText(files[0]);
   };
-
-  // useEffect(() => {
-  //   console.log("parsedData : ", parsedData);
-  //   console.log("tableHeaders : ", tableHeaders);
-  //   console.log("colums : ", colums);
-  // }, [colums]);
 
   return (
     <>
       <Header />
-
       <MainSection>
-        {/* <OrderText> csv 파일을 업로드 하세요</OrderText> */}
-        <div>
-          <input
-            type="file"
-            name="file"
-            accept=".csv"
-            onChange={changeHandler}
-            style={{ display: "block", margin: "10px auto" }}
-          />
-
-          <br />
-          <br />
-
-          <table>
-            <thead>
-              <tr>
-                {tableHeaders.map((rows, index) => {
-                  return <th key={index}> {rows}</th>;
-                })}
+        <input
+          type="file"
+          name="file"
+          accept=".csv"
+          onChange={changeHandler}
+          style={{ display: "block", margin: "10px auto" }}
+        />
+        <br />
+        <br />
+        <Table>
+          <thead>
+            <tr>
+              <th>IP</th>
+              <th>Timestamp</th>
+              <th>Method</th>
+              <th>Path</th>
+              <th>Protocol</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row, index) => (
+              <tr key={index}>
+                <td>{row.ip}</td>
+                <td>{row.timestamp}</td>
+                <td>{row.method}</td>
+                <td>{row.path}</td>
+                <td>{row.protocol}</td>
+                <td>{row.status}</td>
               </tr>
-            </thead>
-
-            <tbody>
-              {pathData.map((row, index) => {
-                return (
-                  <tr key={index}>
-                    {tableHeaders.map((header, i) => {
-                      return <td key={i}>{row[header]}</td>;
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </Table>
       </MainSection>
     </>
   );
 }
 
-const OrderText = styled.div`
-  margin: 1rem;
-  font-weight: 600;
-  font-size: 1.2rem;
-`;
-
 const MainSection = styled.div`
   margin: 0.5rem;
-  /* border: 3px solid red; */
+`;
+
+const Table = styled.table`
+  // 스타일을 추가하세요
 `;
