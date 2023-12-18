@@ -67,6 +67,7 @@ export default function Main() {
     <>
       <Header />
       <MainSection>
+        <OrderText>아래 form에서 프로젝트에 포함된 csv 파일을 첨부하세요</OrderText>
         <input
           type="file"
           name="file"
@@ -112,11 +113,16 @@ export default function Main() {
 }
 
 const MainSection = styled.div`
-  margin: 0.5rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
 `;
 
 const Table = styled.table`
   // 스타일을 추가하세요
+`;
+
+const OrderText = styled.div`
+  margin-left: 1.5rem;
 `;
 
 const SortableHeader = styled.th`

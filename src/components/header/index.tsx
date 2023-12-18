@@ -5,8 +5,8 @@ export default function Header() {
     <>
       <HeaderSection>
         <HeaderUL>
-          <Cartrgory>데이터 정렬</Cartrgory>
-          <Cartrgory>데이터 종류</Cartrgory>
+          <Cartrgory>STC lab 과제 제출 - 프론트엔드 이정운</Cartrgory>
+          {/* <Cartrgory>데이터 종류</Cartrgory> */}
         </HeaderUL>
       </HeaderSection>
       {/* <HeaderText> STC front-end 과제 이정운</HeaderText> */}
