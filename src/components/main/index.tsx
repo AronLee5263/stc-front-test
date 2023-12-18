@@ -13,6 +13,8 @@ type RowData = {
 
 export default function Main() {
   const [data, setData] = useState<RowData[]>([]);
+  const [isSorted, setIsSorted] = useState<boolean>(false);
+  const [isAscending, setIsAscending] = useState<boolean>(true);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -47,6 +49,20 @@ export default function Main() {
     reader.readAsText(files[0]);
   };
 
+  const handleSortByMethod = () => {
+    const sortedData = [...data];
+    sortedData.sort((a, b) => {
+      if (isAscending) {
+        return a.method.localeCompare(b.method);
+      } else {
+        return b.method.localeCompare(a.method);
+      }
+    });
+    setIsAscending(!isAscending);
+    setIsSorted(true);
+    setData(sortedData);
+  };
+
   return (
     <>
       <Header />
@@ -63,22 +79,28 @@ export default function Main() {
         <Table>
           <thead>
             <tr>
-              <th>IP</th>
+              <th>IP </th>
               <th>Timestamp</th>
-              <th>Method</th>
+              <SortableHeader
+                onClick={handleSortByMethod}
+                className={isSorted ? (isAscending ? "sorted-asc" : "sorted-desc") : ""}
+              >
+                Method (button)
+              </SortableHeader>
               <th>Path</th>
-              <th>Protocol</th>
+              <th>Protocol </th>
               <th>Status</th>
             </tr>
           </thead>
+
           <tbody>
             {data.map((row, index) => (
               <tr key={index}>
-                <td>{row.ip}</td>
-                <td>{row.timestamp}</td>
+                <td>{row.ip}&nbsp;&nbsp;&nbsp;</td>
+                <td>{row.timestamp}&nbsp;&nbsp;&nbsp;</td>
                 <td>{row.method}</td>
-                <td>{row.path}</td>
-                <td>{row.protocol}</td>
+                <td>&nbsp;&nbsp;&nbsp;{row.path}&nbsp;</td>
+                <td>{row.protocol}&nbsp;&nbsp;&nbsp;</td>
                 <td>{row.status}</td>
               </tr>
             ))}
@@ -95,4 +117,23 @@ const MainSection = styled.div`
 
 const Table = styled.table`
   // 스타일을 추가하세요
+`;
+
+const SortableHeader = styled.th`
+  cursor: pointer;
+  background-color: #2196f3;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+
+  &.sorted-asc {
+    background-color: #2196f3;
+    color: white;
+  }
+
+  &.sorted-desc {
+    background-color: #2196f3;
+    color: white;
+  }
 `;
