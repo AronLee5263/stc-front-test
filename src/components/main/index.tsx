@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../header";
+import RechartsGragh from "../../reCharts/index";
 
 type RowData = {
   ip: string;
@@ -12,9 +13,23 @@ type RowData = {
 };
 
 export default function Main() {
-  const [data, setData] = useState<RowData[]>([]);
-  const [isSorted, setIsSorted] = useState<boolean>(false);
-  const [isAscending, setIsAscending] = useState<boolean>(true);
+  const [csvData, setCsvData] = useState<RowData[]>([]);
+  const [methodData, setMethodData] = useState<{ name: string; count: number }[]>([]);
+  const [statusData, setStatusData] = useState<{ name: string; count: number }[]>([]);
+
+  const [isSorted, setIsSorted] = useState(false);
+  const [isAscending, setIsAscending] = useState(true);
+
+  // const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}];
+
+  // const renderLineChart = (
+  //   <LineChart width={600} height={300} data={data}>
+  //     <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+  //     <CartesianGrid stroke="#ccc" />
+  //     <XAxis dataKey="name" />
+  //     <YAxis />
+  //   </LineChart>
+  // );
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -44,13 +59,27 @@ export default function Main() {
         return { ip, timestamp, method, path, protocol, status };
       });
 
-      setData(parsedData.filter((row) => row.ip)); // 빈 객체는 필터링
+      setCsvData(parsedData.filter((row) => row.ip)); // 빈 객체는 필터링
     };
     reader.readAsText(files[0]);
   };
 
+  useEffect(() => {
+    const methodCounts: { [key: string]: number } = {};
+    const statusCounts: { [key: string]: number } = {};
+
+    csvData.forEach((row) => {
+      const { method, status } = row;
+      methodCounts[method] = (methodCounts[method] || 0) + 1;
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
+    });
+
+    setMethodData(Object.entries(methodCounts).map(([name, count]) => ({ name, count })));
+    setStatusData(Object.entries(statusCounts).map(([name, count]) => ({ name, count })));
+  }, [csvData]);
+
   const handleSortByMethod = () => {
-    const sortedData = [...data];
+    const sortedData = [...csvData];
     sortedData.sort((a, b) => {
       if (isAscending) {
         return a.method.localeCompare(b.method);
@@ -60,12 +89,14 @@ export default function Main() {
     });
     setIsAscending(!isAscending);
     setIsSorted(true);
-    setData(sortedData);
+    setCsvData(sortedData);
+    console.log(sortedData);
   };
 
   return (
     <>
       <Header />
+      <RechartsGragh methodData={methodData} statusData={statusData} />
       <MainSection>
         <OrderText>아래 form에서 프로젝트에 포함된 csv 파일을 첨부하세요</OrderText>
         <input
@@ -95,7 +126,7 @@ export default function Main() {
           </thead>
 
           <tbody>
-            {data.map((row, index) => (
+            {csvData.map((row, index) => (
               <tr key={index}>
                 <td>{row.ip}&nbsp;&nbsp;&nbsp;</td>
                 <td>{row.timestamp}&nbsp;&nbsp;&nbsp;</td>
@@ -143,3 +174,7 @@ const SortableHeader = styled.th`
     color: white;
   }
 `;
+
+// const Example = styled.div`
+
+// `;
