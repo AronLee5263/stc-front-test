@@ -87,13 +87,14 @@ type DataItem = {
 type RechartsGraphProps = {
   methodData: DataItem[];
   statusData: DataItem[];
+  ipData: DataItem[];
 };
 
-export default function RechartsGragh({ methodData, statusData }: RechartsGraphProps) {
+export default function RechartsGragh({ methodData, statusData, ipData }: RechartsGraphProps) {
   return (
     <>
       <GraghBox>
-        <ResponsiveContainer width="50%" height={300}>
+        <ResponsiveContainer width="30%" height={300}>
           <BarChart data={methodData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
@@ -103,7 +104,7 @@ export default function RechartsGragh({ methodData, statusData }: RechartsGraphP
             <Bar dataKey="count" fill="#8884d8" name="Method" />
           </BarChart>
         </ResponsiveContainer>
-        <ResponsiveContainer width="50%" height={300}>
+        <ResponsiveContainer width="34%" height={300}>
           <BarChart data={statusData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
@@ -111,6 +112,16 @@ export default function RechartsGragh({ methodData, statusData }: RechartsGraphP
             <Tooltip />
             <Legend />
             <Bar dataKey="count" fill="#82ca9d" name="Status" />
+          </BarChart>
+        </ResponsiveContainer>
+        <ResponsiveContainer width="34%" height={300}>
+          <BarChart data={ipData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="count" fill="#8884d8" name="ip" />
           </BarChart>
         </ResponsiveContainer>
       </GraghBox>

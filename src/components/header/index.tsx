@@ -17,6 +17,7 @@ export default function Header() {
 const HeaderSection = styled.div`
   background-color: Orange;
   padding: 0.1rem;
+  margin-bottom: 2rem;
   /* border: 3px solid red; */
 `;
 const HeaderText = styled.div`

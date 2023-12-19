@@ -16,6 +16,7 @@ export default function Main() {
   const [csvData, setCsvData] = useState<RowData[]>([]);
   const [methodData, setMethodData] = useState<{ name: string; count: number }[]>([]);
   const [statusData, setStatusData] = useState<{ name: string; count: number }[]>([]);
+  const [ipData, setIpData] = useState<{ name: string; count: number }[]>([]);
 
   const [isSorted, setIsSorted] = useState(false);
   const [isAscending, setIsAscending] = useState(true);
@@ -67,15 +68,18 @@ export default function Main() {
   useEffect(() => {
     const methodCounts: { [key: string]: number } = {};
     const statusCounts: { [key: string]: number } = {};
+    const ipCounts: { [key: string]: number } = {};
 
     csvData.forEach((row) => {
-      const { method, status } = row;
+      const { method, status, ip } = row;
       methodCounts[method] = (methodCounts[method] || 0) + 1;
       statusCounts[status] = (statusCounts[status] || 0) + 1;
+      ipCounts[ip] = (ipCounts[ip] || 0) + 1;
     });
 
     setMethodData(Object.entries(methodCounts).map(([name, count]) => ({ name, count })));
     setStatusData(Object.entries(statusCounts).map(([name, count]) => ({ name, count })));
+    setIpData(Object.entries(ipCounts).map(([name, count]) => ({ name, count })));
   }, [csvData]);
 
   const handleSortByMethod = () => {
@@ -96,7 +100,7 @@ export default function Main() {
   return (
     <>
       <Header />
-      <RechartsGragh methodData={methodData} statusData={statusData} />
+      <RechartsGragh methodData={methodData} statusData={statusData} ipData={ipData} />
       <MainSection>
         <OrderText>아래 form에서 프로젝트에 포함된 csv 파일을 첨부하세요</OrderText>
         <input
